@@ -18,12 +18,14 @@ export class PostManagementBusinessProcess implements IBusinessProcess<IPostMana
 
     constructor(@inject(diAliases.IPostManager) private postManager: IPostManager) {
         this._postManager = postManager;
+        console.log("initialized");
     }
 
-    sendAction(action: IPostManagementAction): void {
+    sendAction(action: IPostManagementAction): undefined {
         if(action instanceof PostManagementSetCut) {
             this._cutAction(action);
         }
+        return undefined;
     }
 
     async init(): Promise<void> {
@@ -31,7 +33,7 @@ export class PostManagementBusinessProcess implements IBusinessProcess<IPostMana
         this.state.next(new PostManagementAllPostsState(data, false));
     }
 
-    private  _cutAction(action: PostManagementSetCut) {
+    private _cutAction(action: PostManagementSetCut): void {
         this._postManager.getAllPosts(action.cutText)
             .then(x => this.state.next(new PostManagementAllPostsState(x, action.cutText)));
     }

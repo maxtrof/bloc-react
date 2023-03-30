@@ -15,6 +15,6 @@ container.bind<IPostManager>(diAliases.IPostManager).to(PostManager);
 /** end_Posts */
 
 /** start_businessProcesses */
-container.bind<PostManagementBusinessProcess>(diAliases.PostManagementBusinessProcess).to(PostManagementBusinessProcess);
+container.bind<PostManagementBusinessProcess>(diAliases.PostManagementBusinessProcess).to(PostManagementBusinessProcess).inSingletonScope();
 /** end_businessProcesses */
 export {container};

@@ -17,7 +17,7 @@ export class PostManager implements IPostManager{
     async getAllPosts(cutText: boolean = false): Promise<Post[]> {
         const posts = await this._repository.getAllPosts();
         if (cutText) // Мок бизнес-логики
-            posts.forEach(x => x.text.substring(0, 20) + "...");
+            posts.forEach(x => x.text = x.text.substring(0, 25) + "...");
         return posts;
     }
 

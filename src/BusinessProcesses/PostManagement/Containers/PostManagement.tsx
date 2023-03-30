@@ -1,4 +1,3 @@
-
 import {diAliases} from "../../../diAliases";
 import {useBusinessProcess} from "../../../CommonHooks/UseBusinessProcess";
 import {IPostManagementState} from "../State/IPostManagementState";
@@ -17,7 +16,7 @@ export const PostManagement = () => {
     if (state instanceof PostManagementAllPostsState) {
         return <div>
             <h1>{state.cutText ? "text cuted" : "text not cuted"}</h1>
-            <button onClick={action(new PostManagementSetCut(!state.cutText))}>Toggle text cut</button>
+            <button onClick={() => action(new PostManagementSetCut(!state.cutText))}>Toggle text cut</button>
             <PostList posts={state.posts} />
         </div>
     }

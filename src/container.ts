@@ -6,8 +6,13 @@ import {IMockRepository} from "./Infrastructure/Interfaces/IMockRepository";
 import {IPostManager} from "./Business/Interfaces/IPostManager";
 import {PostManager} from "./Business/PostManager/PostManager";
 import {PostManagementBusinessProcess} from "./BusinessProcesses/PostManagement/PostManagementBusinessProcess";
+import axios, {Axios, AxiosInstance} from "axios";
 
 const container = new Container();
+
+/** start_utility */
+container.bind<AxiosInstance>(diAliases.Axios).toDynamicValue(() => axios.create());
+/** end_utility */
 
 /** start_Posts */
 container.bind<IMockRepository>(diAliases.IMockRepository).to(MockRepository);

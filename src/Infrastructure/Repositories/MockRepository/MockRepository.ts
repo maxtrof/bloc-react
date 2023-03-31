@@ -1,8 +1,10 @@
 import {IMockRepository} from "../../Interfaces/IMockRepository";
 import {Post} from "./Models/Post";
-import axios, {AxiosError} from "axios";
-import {PostDto} from "./Dto/PostDto";
-import {injectable} from "inversify";
+import {AxiosError} from "axios";
+import type {AxiosInstance} from "axios";
+import {mapToPost, PostDto} from "./Dto/PostDto";
+import {inject, injectable} from "inversify";
+import {diAliases} from "../../../diAliases";
 
 /** Релизация {@link IMockRepository} */
 @injectable()
@@ -13,22 +15,20 @@ export class MockRepository implements IMockRepository{
     private readonly getAllPostsUrl = "/posts";
     private readonly getPostUrl = "/posts/{0}";
     // todo
-    private client = axios.create({
-        baseURL: this.baseUrl,
-        timeout: this.timeout
-    });
+
+    private _client: AxiosInstance;
+
+    constructor(@inject(diAliases.Axios) private axios: AxiosInstance) {
+        this._client = axios;
+        this._client.defaults.baseURL = this.baseUrl;
+        this._client.defaults.timeout = this.timeout;
+    }
 
     /** @inheritdoc */
     async getAllPosts(): Promise<Post[]> {
         try {
-          const response = await this.client.get<PostDto[]>(this.getAllPostsUrl);
-          const mapped = response.data.map(x => {
-              const post: Post = {
-                ...x, // В случае различий полей - можно их замапить/инициализировать отдельно,
-                text: x.body
-              };
-              return post;
-          });
+          const response = await this._client.get<PostDto[]>(this.getAllPostsUrl);
+          const mapped = response.data.map(x => mapToPost(x));
           return mapped;
         } catch (e) {
             this.processError(e);
@@ -39,12 +39,9 @@ export class MockRepository implements IMockRepository{
     /** @inheritdoc */
     async getSinglePost(id: number): Promise<Post> {
         try {
-            const response = await this.client.get<PostDto>(this.getPostUrl.replace("{0}", id.toString()));
-            const post: Post = {
-                ...response.data, // В случае различий полей - можно их замапить/инициализировать отдельно,
-                text: response.data.body
-            };
-            return post;
+            const response = await this._client.get<PostDto>(this.getPostUrl.replace("{0}", id.toString()));
+            const mapped = mapToPost(response.data);
+            return mapped;
         } catch (e) {
             this.processError(e);
             throw e;
